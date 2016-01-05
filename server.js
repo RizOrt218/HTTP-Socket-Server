@@ -18,6 +18,7 @@ function serversEventListener( socReq ) {
       uri = '/index.html';
       type = 'html';
     }
+
     if ( type === 'html' ) {
       console.log( type );
       type = 'text/html';
