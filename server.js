@@ -1,4 +1,5 @@
 var net = require( 'net' );
+var fs = require( 'fs' );
 
 var server = net.createServer( serversEventListener );
 
@@ -8,21 +9,33 @@ function serversEventListener( incomingRequest ) { //server listening for socket
   //open connection
   incomingRequest.on( 'data', function( buffer ) {
     var bufferString = buffer.split( ' ' );
-    console.log( 'REQUESTING DATA ====>', bufferString );
+    var path = bufferString[ 1 ].toString();
+    var getDate = new Date( ).toString( );
+    var type = 'text/html';
 
-    console.log( 'hellelooo', bufferString[ 1 ] ); // cl : /
-    if ( bufferString[1] === '/' ) {
+    if ( path === '/' ) {
+      path = '/index.html';
+    }
 
-      incomingRequest.write( 'HTTP/1.1 200 OK\n' );
-      incomingRequest.write( 'Server: \n' );
-      incomingRequest.write( 'Date: \n' );
-      incomingRequest.write( 'Content-Type: text/html; charset=utf-8\n' );
-      incomingRequest.write( 'Content-Length: \n' );
+    fs.readFile( './server_file' + path, function ( err , data ) {
+      var currentData = data.toString();
+      if ( err ) {
+      }
+      if ( path === '/styles.css' ){
+        type = 'text/css';
+      }
+      var stat = 'HTTP/ 1.1 200 OK\n';
+      incomingRequest.write( stat );
+      incomingRequest.write( 'Server: Rizzy\'s Server \n' );
+      incomingRequest.write( 'Date:' + getDate + ' \n' );
+      incomingRequest.write( 'Content-Type:' + type + ';' + ' charset=utf-8\n' );
+      incomingRequest.write( 'Content-Length:' + currentData.length + ' \n' );
       incomingRequest.write( 'Connection: keep-alive\n' );
+      incomingRequest.write( 'Status: ' + stat + '\n' );
       incomingRequest.write('\n\n');
-      incomingRequest.write( 'body content that contains resources that was requested\n' );
-      incomingRequest.end( "server request ended! \n" );   //terminate connection
-    } // end of if ( bufferString[1] === '/' )
+      incomingRequest.write( currentData );
+      incomingRequest.end(  );   //terminate connection
+    });
   }); // end of incomingRequest.on
 } // end of serversEventListener( )
 
