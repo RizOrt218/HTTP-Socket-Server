@@ -29,30 +29,38 @@ function serversEventListener( socReq ) {
     return fs.readFile( './server_file' + uri, function ( err , data ) {
       if ( err ) {
         type = 'text/html';
-        return fs.readFile( './server_file/404.html' , function( err, data ) {
-            socReq.write( 'HTTP/ 1.1 404 Not Found\n');
-            socReq.write( 'Server: Rizzy\'s Server \n' );
-            socReq.write( 'Date:' + getDate + ' \n' );
-            socReq.write( 'Content-Type:' + type + ';' + ' charset=utf-8\n' );
-            socReq.write( 'Content-Length:' + data.length + ' \n' );
-            socReq.write( 'Connection: keep-alive\n' );
-            socReq.write('\n\n');
-            socReq.write( data );
+        return fs.readFile( './server_file/404.html' , function ( err, data ) {
+          socReq.write(
+            'HTTP/ 1.1 404 Not Found\n ' +
+            'Server: Rizzy\'s Server \n' +
+            'Date:' + getDate + ' \n' +
+            'Content-Type:' + type + ';' + ' charset=utf-8\n' +
+            'Content-Length:' + data.length + ' \n' +
+            'Connection: keep-alive\n' +
+            '\n\n' +
+            data );
             return socReq.end(  );   //terminate connection
         });
       } // end of if ( err )
-        socReq.write( 'HTTP/ 1.1 200 OK\n');
-        socReq.write( 'Server: Rizzy\'s Server \n' );
-        socReq.write( 'Date:' + getDate + ' \n' );
-        socReq.write( 'Content-Type:' + type + ';' + ' charset=utf-8\n' );
-        socReq.write( 'Content-Length:' + data.length + ' \n' );
-        socReq.write( 'Connection: keep-alive\n' );
-        socReq.write('\n\n');
-        socReq.write( data );
-        socReq.end(  );   //terminate connection
+      socReq.write(
+        'HTTP/ 1.1 200 OK\n ' +
+        'Server: Rizzy\'s Server \n' +
+        'Date:' + getDate + ' \n' +
+        'Content-Type:' + type + ';' + ' charset=utf-8\n' +
+        'Content-Length:' + data.length + ' \n' +
+        'Connection: keep-alive\n' +
+        '\n\n' +
+        data );
+      socReq.end( 'end connection' );   //terminate connection
     }); // end of fs.readFile
   }); // end of socReq.on
+
+      socReq.on( 'end', function() {
+        console.log( 'disconnected from server' );
+      }); // end of end fn
+
 } // end of serversEventListener( )
+
 
 // grab a random port.
 server.listen( { port: 8080 }, function() {
